@@ -1,0 +1,10 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="Api/Api.csproj" />
+    <Project Path="Api.Client/Api.Client.csproj" />
+    <Project Path="Api.Core/Api.Core.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="Api.UnitTests\Api.UnitTests.csproj" Type="Classic C#" />
+  </Folder>
+</Solution>

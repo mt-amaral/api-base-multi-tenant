@@ -1,8 +1,8 @@
-# API base multi tenant .net 9.0
+# API base multi-tenant .net 9.0
 
-API em ASP.NET Core com foco em autenticação, multi tenant simples, **ASP.NET Identity**, **cookie auth** e **refresh token**.
+API em ASP.NET Core para servir como base white label, com autenticação, multi-tenant, **ASP.NET Identity**, **cookie auth** e **refresh token**.
 
-A ideia do projeto é manter tudo simples, organizado e com um padrão bem definido, para servir como base para futuros projetos que precisam ter mais de uma aplicação usando o mesmo banco e o mesmo núcleo:
+O projeto reaproveita o mesmo núcleo em mais de uma aplicação, mantendo banco, entidades e configurações principais em um lugar só:
 
 - **DTOs com `record`** para entrada e saída
 - **Response padrão** para quase todas as respostas da API
@@ -11,7 +11,7 @@ A ideia do projeto é manter tudo simples, organizado e com um padrão bem defin
 - **Services** focados em regra de negócio
 - **Identity customizado** com entidades próprias e `long` como chave
 - **Mappings do Identity** separados para controlar tamanho de campos, nomes de tabela e afins
-- **Api.Core** com o que é compartilhado entre as APIs, como contexto, entidades, mappings e migrations
+- **Api.Core** com o que é compartilhado entre as APIs: contexto, entidades, mappings e migrations
 - **Api** para a parte admin/recrutador
 - **Api.Client** para a parte cliente
 - **ConfigApp** centralizando parâmetros estáticos da aplicação
@@ -23,9 +23,9 @@ A ideia do projeto é manter tudo simples, organizado e com um padrão bem defin
 
 ## Multi tenant
 
-O objetivo do multi tenant aqui é ser básico e bem feito, sem tentar resolver tudo antes da hora.
+O multi-tenant permite que a mesma base atenda mais de uma empresa/cliente, usando um único banco e mantendo a separação por tenant.
 
-A ideia é ter um único banco para vários clientes/empresas, separando os acessos pelo tipo de usuário e pela empresa vinculada.
+Esse formato ajuda a criar APIs white label: a regra principal fica no núcleo e cada aplicação expõe apenas o que precisa.
 
 Hoje a base já tem:
 
@@ -33,14 +33,14 @@ Hoje a base já tem:
 - `AdminUser` vinculado a um usuário e uma empresa
 - `ClientUser` vinculado a um usuário e uma empresa
 - `UserType` no usuário para separar `Admin` e `Client`
-- claims com referências importantes, como `user_type`, `company_id` e `tenant_id`
+- claims com referências como `user_type`, `company_id` e `tenant_id`
 
 O `Api` aceita somente usuário admin.
 O `Api.Client` aceita somente usuário cliente.
 
 Os dois usam o mesmo `Api.Core`, o mesmo `ApplicationDbContext` e o mesmo banco.
 
-Ainda não é um multi tenant cheio de abstração e filtro global em todas as entidades. A ideia é evoluir isso conforme as entidades de negócio forem entrando, sempre filtrando pelo tenant/empresa quando fizer sentido.
+As próximas entidades de negócio devem considerar o tenant/empresa quando a regra exigir isolamento.
 
 ## Autenticação
 
@@ -57,7 +57,7 @@ Fluxo:
 
 ## Padrão de retorno
 
-A API trabalha com um objeto `Response<T>` simples:
+A API trabalha com um objeto `Response<T>`:
 
 - `data`
 - `message`
@@ -71,7 +71,7 @@ Para paginação, usa `PagedResponse<T>` com:
 - `totalCount`
 - `totalPages`
 
-Mantenha sempre esse padrão! E envolva as respostas da API com ele.
+Mantenha esse padrão nas respostas da API.
 
 ## Seed inicial
 
@@ -96,15 +96,15 @@ Lembre-se de trocar usuário/senha em produção.
 
 ### Api.UnitTests (xUnit)
 
-O teste está bem simples, só para garantir a validação dos requests das controllers (Input Model Validation), conforme as regras forem definidas
-Seria interessante criar teste nos principais métodos de serviços.
+Os testes estão focados na validação dos requests das controllers (Input Model Validation).
+Conforme as regras crescerem, vale cobrir também os principais métodos de services.
 
 Rodar testes:
 **dotnet test**
 
 ## Observações
 
-o objetivo é ser simples e pratico:
+o objetivo é manter a base simples e pratica:
 
 - controller simples
 - service com regra de negócio
@@ -112,7 +112,7 @@ o objetivo é ser simples e pratico:
 - retorno padronizado
 - núcleo compartilhado no `Api.Core`
 - coisas especificas ficam em cada API
-- multi tenant basico antes de qualquer complexidade
+- isolamento por tenant onde a regra de negócio precisar
 
 ## Banco
 
